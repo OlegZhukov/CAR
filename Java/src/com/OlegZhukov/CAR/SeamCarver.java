@@ -1,5 +1,9 @@
+package com.OlegZhukov.CAR;
+
 import java.awt.Color;
 import java.util.Arrays;
+
+import edu.princeton.cs.introcs.Picture;
 
 public class SeamCarver {
     private static final int BORDER_ENERGY = 195075;
