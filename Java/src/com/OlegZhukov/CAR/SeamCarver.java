@@ -28,7 +28,7 @@ public class SeamCarver {
         initLinearizedPicture();
 
         this.energyFunc = energyFunc;
-        this.energyFunc.init(n, linearizedPicture);
+        this.energyFunc.init(n, m, linearizedPicture);
 
         initEnergy();
 
@@ -73,24 +73,9 @@ public class SeamCarver {
 
     private void initEnergy() {
         energy = new float[nm];
-        energy[0] = energyFunc.topLeftCornerValue();
-        for (int i = 1; i < n - 1; i++)
-            energy[i] = energyFunc.topBorderValue(i);
-        energy[n - 1] = energyFunc.topRightCornerValue(n - 1);
-        int i = n + 1, rightmost = 2 * n - 1;
-        if (n > 2 && m > 2) for (;; i++) {
-            if (i == rightmost) {
-                energy[i++] = energyFunc.rightBorderValue(rightmost);
-                rightmost += n;
-                if (rightmost == nm - 1) break;
-                energy[i] = energyFunc.leftBorderValue(i); // next leftmost
-            }
-            else energy[i] = energyFunc.nonBorderValue(i);
-        }
-        energy[i] = energyFunc.bottomLeftCornerValue(i);
-        for (i++; i < nm - 1; i++)
-            energy[i] = energyFunc.bottomBorderValue(i);
-        energy[i] = energyFunc.bottomRightCornerValue(i);
+        for (int y = 0, k = 0; y < m; y++)
+            for (int x = 0; x < n; x++, k++)
+                energy[k] = energyFunc.value(k, x, y);
     }
 
     private int[] findSeam() {
@@ -115,6 +100,7 @@ public class SeamCarver {
     private void removeSeamFromLinearizedPictureAndEnergy(int[] seam) {
         System.arraycopy(energy, 0, energy, 0, seam[0]);
         System.arraycopy(linearizedPicture, 0, linearizedPicture, 0, seam[0]);
+
         int srcPos = seam[0] + 1, destPos = seam[0];
         for (int i = 0; i < m - 1; i++) {
             int length = seam[i + 1] - seam[i] + n - 1;
@@ -124,71 +110,20 @@ public class SeamCarver {
             srcPos += length + 1;
             destPos += length;
         }
+
         System.arraycopy(energy, srcPos, energy, destPos, n - seam[m - 1] - 1);
         System.arraycopy(linearizedPicture, srcPos, linearizedPicture,
                 destPos, n - seam[m - 1] - 1);
-
-        energyFunc.setN(--n);
+        n--;
         nm -= m;
+        energyFunc.decrementN();
     }
 
     private void updateEnergyAlongSeam(int[] seam) {
-
-        updateTopBorderEnergy(seam[0]);
-
-        for (int y = 1, leftmost = n; y < m - 1; y++, leftmost += n) {
-            int seamX = seam[y], pos = leftmost + seamX, rightmost =
-                    leftmost + n - 1;
-            if (seamX > 1 && seamX < n - 1) {
-                energy[pos] = energyFunc.nonBorderValue(pos);
-                energy[pos - 1] = energyFunc.nonBorderValue(pos - 1);
-            }
-            else if (seamX <= 1) {
-                energy[leftmost] = energyFunc.leftBorderValue(leftmost);
-                if (seamX == 1) energy[pos] = energyFunc.nonBorderValue(pos);
-            }
-            else if (seamX >= n - 1) {
-                energy[rightmost] = energyFunc.rightBorderValue(rightmost);
-                if (seamX == n - 1) energy[pos - 1] =
-                        energyFunc.nonBorderValue(pos - 1);
-            }
-        }
-
-        updateBottomBorderEnergy(seam[m - 1]);
-    }
-
-    private void updateTopBorderEnergy(int seamX) {
-        if (seamX > 1 && seamX < n - 1) {
-            energy[seamX] = energyFunc.topBorderValue(seamX);
-            energy[seamX - 1] = energyFunc.topBorderValue(seamX - 1);
-        }
-        else if (seamX <= 1) {
-            energy[0] = energyFunc.topLeftCornerValue();
-            if (seamX == 1) energy[1] = energyFunc.topBorderValue(1);
-        }
-        else if (seamX >= n - 1) {
-            energy[n - 1] = energyFunc.topRightCornerValue(n - 1);
-            if (seamX == n - 1) energy[n - 2] =
-                    energyFunc.topBorderValue(n - 2);
-        }
-    }
-
-    private void updateBottomBorderEnergy(int seamX) {
-        int bottomLeft = nm - n, bottomRight = nm - 1;
-        int pos = bottomLeft + seamX;
-        if (seamX > 1 && seamX < n - 1) {
-            energy[pos] = energyFunc.bottomBorderValue(pos);
-            energy[pos - 1] = energyFunc.bottomBorderValue(pos - 1);
-        }
-        else if (seamX <= 1) {
-            energy[bottomLeft] = energyFunc.bottomLeftCornerValue(bottomLeft);
-            if (seamX == 1) energy[pos] = energyFunc.bottomBorderValue(pos);
-        }
-        else if (seamX >= n - 1) {
-            energy[bottomRight] =
-                    energyFunc.bottomRightCornerValue(bottomRight);
-            if (seamX == n - 1) energy[pos - 1] =
-                    energyFunc.bottomBorderValue(pos - 1);
+        for (int y = 0, leftmost = 0; y < m; y++, leftmost += n) {
+            int x = seam[y], i = leftmost + x;
+            if (x < n) energy[i] = energyFunc.value(i, x, y);
+            if (x > 0) energy[i - 1] = energyFunc.value(i - 1, x - 1, y);
         }
     }
 }

@@ -1,35 +1,20 @@
 package com.OlegZhukov.CAR;
 
 public abstract class EnergyFunction {
-    protected int n;
+    protected int n, m;
     protected int[] linearizedPicture;
 
-    public void setN(int n) {
-        this.n = n;
+    public void decrementN() {
+        this.n--;
     }
 
-    public void init(int n, int[] linearizedPicture) {
+    public void init(int n, int m, int[] linearizedPicture) {
         this.n = n;
+        this.m = m;
         this.linearizedPicture = linearizedPicture;
     }
 
-    public abstract float nonBorderValue(int i);
-
-    public abstract float topBorderValue(int i);
-
-    public abstract float bottomBorderValue(int i);
-
-    public abstract float leftBorderValue(int i);
-
-    public abstract float rightBorderValue(int i);
-
-    public abstract float topLeftCornerValue();
-
-    public abstract float topRightCornerValue(int i);
-
-    public abstract float bottomLeftCornerValue(int i);
-
-    public abstract float bottomRightCornerValue(int i);
+    public abstract float value(int i, int x, int y);
 
     protected float red(int color) {
         return (color >> 16) & 0xFF;
@@ -43,7 +28,8 @@ public abstract class EnergyFunction {
         return (color >> 0) & 0xFF;
     }
 
-    protected float brightness(int color) {
-        return (red(color) + green(color) + blue(color)) / 765;
+    protected float brightness(int i) {
+        int color = linearizedPicture[i];
+        return (red(color) + green(color) + blue(color)) / (3 * 255);
     }
 }

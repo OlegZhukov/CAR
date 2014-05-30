@@ -4,7 +4,10 @@ public class RGBGradientNormWithConstantBorders extends EnergyFunction {
     private static final int BORDER_ENERGY = 195075;
 
     @Override
-    public float nonBorderValue(int i) {
+    public float value(int i, int x, int y) {
+
+        if (x == 0 || x == n - 1 || y == 0 || y == m - 1) return BORDER_ENERGY;
+
         int upper = linearizedPicture[i - n], lower = linearizedPicture[i + n];
         int left = linearizedPicture[i - 1], right = linearizedPicture[i + 1];
         float rDeltaX = red(right) - red(left), rDeltaY =
@@ -17,45 +20,4 @@ public class RGBGradientNormWithConstantBorders extends EnergyFunction {
                 + gDeltaX * gDeltaX + gDeltaY * gDeltaY
                 + bDeltaX * bDeltaX + bDeltaY * bDeltaY);
     }
-
-    @Override
-    public float topBorderValue(int i) {
-        return BORDER_ENERGY;
-    }
-
-    @Override
-    public float bottomBorderValue(int i) {
-        return BORDER_ENERGY;
-    }
-
-    @Override
-    public float leftBorderValue(int i) {
-        return BORDER_ENERGY;
-    }
-
-    @Override
-    public float rightBorderValue(int i) {
-        return BORDER_ENERGY;
-    }
-
-    @Override
-    public float topLeftCornerValue() {
-        return BORDER_ENERGY;
-    }
-
-    @Override
-    public float topRightCornerValue(int i) {
-        return BORDER_ENERGY;
-    }
-
-    @Override
-    public float bottomLeftCornerValue(int i) {
-        return BORDER_ENERGY;
-    }
-
-    @Override
-    public float bottomRightCornerValue(int i) {
-        return BORDER_ENERGY;
-    }
-
 }
