@@ -1,33 +1,59 @@
 package com.OlegZhukov.CAR.Test;
 
+import java.io.File;
+
 import org.junit.Assert;
 
-import com.OlegZhukov.CAR.SeamCarver;
+import com.OlegZhukov.CAR.CAR;
 
+import cucumber.api.java.After;
+import cucumber.api.java.Before;
+import cucumber.api.java.en.And;
 import cucumber.api.java.en.Given;
 import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
 import edu.princeton.cs.introcs.Picture;
 
 public class StepDefs {
-    private SeamCarver sc;
+    private String inputImageFile;
+    private String energyFunc;
+    private String reverseScan;
+
+    @Before
+    public void beforeScenario() {
+        energyFunc = reverseScan = "";
+    }
 
     @Given("^image (.*)$")
     public void givenImage(String inputImageFile) {
-        sc = new SeamCarver(new Picture(inputImageFile));
+        this.inputImageFile = inputImageFile;
     }
 
-    @When("^I remove (\\d+) vertical and (\\d+) horizontal seams$")
-    public void removeSeams(int v, int h) {
-        for (int i = 0; i < v; i++)
-            sc.removeVerticalSeam(sc.findVerticalSeam());
-        for (int i = 0; i < h; i++)
-            sc.removeHorizontalSeam(sc.findHorizontalSeam());
+    @When("^I use the energy function (.*)$")
+    public void useEnergyFunc(String energyFunc) {
+        this.energyFunc = energyFunc;
+    }
+
+    @And("I switch to a reverse scan")
+    public void switchToReverseScan() {
+        this.reverseScan = " -r";
+    }
+
+    @And("^I resize the image to (.*) width and (.*) height$")
+    public void resize(String v, String h) {
+        if (energyFunc != "") energyFunc = " -e=" + energyFunc;
+        CAR.main(String.format("-w=%s -h=%s%s%s %s", v, h, energyFunc,
+                reverseScan, inputImageFile).split(" "));
     }
 
     @Then("^I should get image (.*)$")
     public void shouldGetImage(String expectedImageFile) {
-        Picture expectedImage = new Picture(expectedImageFile);
-        Assert.assertTrue(expectedImage.equals(sc.picture()));
+        Assert.assertTrue(new Picture(expectedImageFile).equals(new Picture(CAR
+                .getOutputPictureFile())));
+    }
+
+    @After
+    public void afterScenario() {
+        new File(CAR.getOutputPictureFile()).delete();
     }
 }

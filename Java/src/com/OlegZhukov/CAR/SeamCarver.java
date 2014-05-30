@@ -1,168 +1,217 @@
 package com.OlegZhukov.CAR;
 
 import java.awt.Color;
-import java.util.Arrays;
 
 import edu.princeton.cs.introcs.Picture;
 
 public class SeamCarver {
-    private static final int BORDER_ENERGY = 195075;
-    private Picture picture;
-    private int[] energy;
-    private int[] energyT;
+    private Picture cachedPicture;
+    private boolean removeVerticalSeams;
+    private boolean reverseScan;
+    private ProgressListener progressListener;
+    private int n, m, nm;
+    private EnergyFunction energyFunc;
+    private int[] linearizedPicture;
+    private float[] energy;
+    private int[] lastFoundSeam;
+    private float[] distTo;
+    private int[] prev;
 
-    public SeamCarver(Picture picture) {
-        this.picture = new Picture(picture);
-        energy = createEnergyMatrix();
-        energyT = transpose(energy);
-    }
+    public SeamCarver(Picture picture, boolean removeVerticalSeams,
+            boolean reverseScan, EnergyFunction energyFunc,
+            ProgressListener progressListener) {
+        this.cachedPicture = picture;
+        this.removeVerticalSeams = removeVerticalSeams;
+        this.reverseScan = reverseScan;
+        this.progressListener = progressListener;
+        this.n = removeVerticalSeams ? picture.width() : picture.height();
+        this.m = removeVerticalSeams ? picture.height() : picture.width();
+        this.nm = n * m;
 
-    private int[] createEnergyMatrix() {
-        int n = width(), m = height(), nm = n * m;
-        int[] result = new int[nm];
-        Arrays.fill(result, 0, n + 1, BORDER_ENERGY);
-        int i = n + 1, x = 1, y = 1, rightmost = 2 * n - 1;
-        if (n > 2 && m > 2) for (;; i++, x++) {
-            if (i == rightmost) {
-                result[i++] = BORDER_ENERGY;
-                rightmost += n;
-                if (rightmost == nm - 1) break;
-                result[i] = BORDER_ENERGY; // next leftmost
-                x = 0;
-                y++;
-            }
-            else result[i] = getEnergy(x, y);
-        }
-        Arrays.fill(result, i, nm, BORDER_ENERGY);
-        return result;
-    }
+        initLinearizedPicture();
 
-    private int getEnergy(int x, int y, boolean transpose) {
-        return transpose ? getEnergy(y, x) : getEnergy(x, y);
-    }
+        this.energyFunc = energyFunc;
+        this.energyFunc.init(n, linearizedPicture);
 
-    private int getEnergy(int x, int y) {
-        Color top = picture.get(x, y - 1), bottom = picture.get(x, y + 1);
-        Color left = picture.get(x - 1, y), right = picture.get(x + 1, y);
-        int rDeltaX = right.getRed() - left.getRed(), rDeltaY =
-                bottom.getRed() - top.getRed(), gDeltaX =
-                right.getGreen() - left.getGreen(), gDeltaY =
-                bottom.getGreen() - top.getGreen(), bDeltaX =
-                right.getBlue() - left.getBlue(), bDeltaY =
-                bottom.getBlue() - top.getBlue();
-        return rDeltaX * rDeltaX + rDeltaY * rDeltaY
-                + gDeltaX * gDeltaX + gDeltaY * gDeltaY
-                + bDeltaX * bDeltaX + bDeltaY * bDeltaY;
-    }
+        initEnergy();
 
-    private int[] transpose(int[] e) {
-        int n = e == this.energy ? width() : height(), m =
-                e == this.energy ? height() : width(), nm = n * m;
-        int[] result = new int[nm];
-        int i = 0;
-        for (int x = 0; x < n; x++)
-            for (int j = x; j < nm; j += n)
-                result[i++] = e[j];
-        return result;
+        this.lastFoundSeam = new int[m];
+        this.distTo = new float[nm];
+        this.prev = new int[nm];
     }
 
     public Picture picture() {
-        return this.picture;
+        if (cachedPicture == null) cachedPicture =
+                createPictureByLinearizedPicture();
+        return cachedPicture;
     }
 
-    public int width() {
-        return this.picture.width();
+    public void removeSeams(int count) {
+        for (int i = 0; i < count; i++)
+            removeSeam(findSeam());
     }
 
-    public int height() {
-        return this.picture.height();
-    }
-
-    public double energy(int x, int y) {
-        if (x < 0 || y < 0 || x >= width() || y >= height()) {
-            throw new IndexOutOfBoundsException();
+    private void initLinearizedPicture() {
+        linearizedPicture = new int[nm];
+        if (reverseScan) {
+            if (removeVerticalSeams) for (int i = m - 1, k = 0; i >= 0; i--)
+                for (int j = 0; j < n; j++, k++)
+                    linearizedPicture[k] = cachedPicture.get(j, i).getRGB();
+            else for (int i = m - 1, k = 0; i >= 0; i--)
+                for (int j = 0; j < n; j++, k++)
+                    linearizedPicture[k] = cachedPicture.get(i, j).getRGB();
         }
-        return energy[x + y * width()];
+        else {
+            if (removeVerticalSeams) for (int i = 0, k = 0; i < m; i++)
+                for (int j = 0; j < n; j++, k++)
+                    linearizedPicture[k] = cachedPicture.get(j, i).getRGB();
+            else for (int i = 0, k = 0; i < m; i++)
+                for (int j = 0; j < n; j++, k++)
+                    linearizedPicture[k] = cachedPicture.get(i, j).getRGB();
+        }
     }
 
-    public int[] findHorizontalSeam() {
-        return findSeam(energyT, height());
-    }
-
-    public int[] findVerticalSeam() {
-        return findSeam(energy, width());
-    }
-
-    private int[] findSeam(int[] e, int n) {
-        int nm = e.length, m = nm / n;
-        int[] result = new int[m];
-        int[] distTo = new int[nm], prev = new int[nm];
-        int spNode = new ShortestVerticalPath(e, n, distTo, prev).doFind();
-        int rowLeftmost = nm - n;
-        for (int i = m - 1; i >= 0; i--) {
-            result[i] = spNode - rowLeftmost;
-            rowLeftmost -= n;
-            spNode = prev[spNode];
+    private Picture createPictureByLinearizedPicture() {
+        int width = removeVerticalSeams ? n : m;
+        int height = removeVerticalSeams ? m : n;
+        Picture result = new Picture(width, height);
+        if (reverseScan) {
+            if (removeVerticalSeams) for (int i = m - 1, k = 0; i >= 0; i--)
+                for (int j = 0; j < n; j++, k++)
+                    result.set(j, i, new Color(linearizedPicture[k]));
+            else for (int i = m - 1, k = 0; i >= 0; i--)
+                for (int j = 0; j < n; j++, k++)
+                    result.set(i, j, new Color(linearizedPicture[k]));
+        }
+        else {
+            if (removeVerticalSeams) for (int i = 0, k = 0; i < m; i++)
+                for (int j = 0; j < n; j++, k++)
+                    result.set(j, i, new Color(linearizedPicture[k]));
+            else for (int i = 0, k = 0; i < m; i++)
+                for (int j = 0; j < n; j++, k++)
+                    result.set(i, j, new Color(linearizedPicture[k]));
         }
         return result;
     }
 
-    public void removeHorizontalSeam(int[] a) {
-        int n = picture.width(), m = picture.height();
-        Picture newPicture = new Picture(n, m - 1);
-        for (int x = 0; x < n; x++) {
-            int shift = 0;
-            for (int y = 0; y < m; y++)
-                if (y == a[x]) shift = 1;
-                else newPicture.set(x, y - shift, picture.get(x, y));
+    private void initEnergy() {
+        energy = new float[nm];
+        energy[0] = energyFunc.topLeftCornerValue();
+        for (int i = 1; i < n - 1; i++)
+            energy[i] = energyFunc.topBorderValue(i);
+        energy[n - 1] = energyFunc.topRightCornerValue(n - 1);
+        int i = n + 1, rightmost = 2 * n - 1;
+        if (n > 2 && m > 2) for (;; i++) {
+            if (i == rightmost) {
+                energy[i++] = energyFunc.rightBorderValue(rightmost);
+                rightmost += n;
+                if (rightmost == nm - 1) break;
+                energy[i] = energyFunc.leftBorderValue(i); // next leftmost
+            }
+            else energy[i] = energyFunc.nonBorderValue(i);
         }
-        picture = newPicture;
-
-        energyT = cloneEnergySkippingSeam(energyT, a);
-        correctEnergyAlongSeam(energyT, a);
-        energy = transpose(energyT);
+        energy[i] = energyFunc.bottomLeftCornerValue(i);
+        for (i++; i < nm - 1; i++)
+            energy[i] = energyFunc.bottomBorderValue(i);
+        energy[i] = energyFunc.bottomRightCornerValue(i);
     }
 
-    public void removeVerticalSeam(int[] a) {
-        int n = picture.width(), m = picture.height();
-        Picture newPicture = new Picture(n - 1, m);
-        for (int y = 0; y < m; y++) {
-            int shift = 0;
-            for (int x = 0; x < n; x++)
-                if (x == a[y]) shift = 1;
-                else newPicture.set(x - shift, y, picture.get(x, y));
+    private int[] findSeam() {
+        int spNode =
+                new ShortestVerticalPath(energy, n, nm, distTo, prev).doFind();
+        int currRowLeftmost = nm - n;
+        for (int i = m - 1; i >= 0; i--) {
+            lastFoundSeam[i] = spNode - currRowLeftmost;
+            currRowLeftmost -= n;
+            spNode = prev[spNode];
         }
-        picture = newPicture;
-
-        energy = cloneEnergySkippingSeam(energy, a);
-        correctEnergyAlongSeam(energy, a);
-        energyT = transpose(energy);
+        return lastFoundSeam;
     }
 
-    private void correctEnergyAlongSeam(int[] e, int[] a) {
-        int nm = e.length, m = a.length, n = nm / m;
-        boolean transp = e == energyT;
-        for (int y = 1, offset = n; y < m - 1; y++, offset += n) {
-            int x = a[y], pos = offset + x;
-            if (x < n - 1 && x > 0) e[pos] = getEnergy(x, y, transp);
-            else if (x == 0) e[pos] = BORDER_ENERGY;
-            if (x < n && x > 1) e[pos - 1] = getEnergy(x - 1, y, transp);
-            else if (x == n) e[pos - 1] = BORDER_ENERGY;
-        }
+    private void removeSeam(int[] seam) {
+        cachedPicture = null;
+        removeSeamFromLinearizedPictureAndEnergy(seam);
+        correctEnergyAlongSeam(seam);
+        if (progressListener != null) progressListener.notifySeamRemoved();
     }
 
-    private int[] cloneEnergySkippingSeam(int[] src, int[] a) {
-        int nm = src.length, m = a.length, n = nm / m;
-        int[] dest = new int[nm - m];
-        System.arraycopy(src, 0, dest, 0, a[0]);
-        int srcPos = a[0] + 1, destPos = a[0];
+    private void removeSeamFromLinearizedPictureAndEnergy(int[] seam) {
+        System.arraycopy(energy, 0, energy, 0, seam[0]);
+        System.arraycopy(linearizedPicture, 0, linearizedPicture, 0, seam[0]);
+        int srcPos = seam[0] + 1, destPos = seam[0];
         for (int i = 0; i < m - 1; i++) {
-            int length = a[i + 1] - a[i] + n - 1;
-            System.arraycopy(src, srcPos, dest, destPos, length);
+            int length = seam[i + 1] - seam[i] + n - 1;
+            System.arraycopy(energy, srcPos, energy, destPos, length);
+            System.arraycopy(linearizedPicture, srcPos, linearizedPicture,
+                    destPos, length);
             srcPos += length + 1;
             destPos += length;
         }
-        System.arraycopy(src, srcPos, dest, destPos, n - a[m - 1] - 1);
-        return dest;
+        System.arraycopy(energy, srcPos, energy, destPos, n - seam[m - 1] - 1);
+        System.arraycopy(linearizedPicture, srcPos, linearizedPicture,
+                destPos, n - seam[m - 1] - 1);
+        n--;
+        nm -= m;
+        energyFunc.setN(n);
+    }
+
+    private void correctEnergyAlongSeam(int[] seam) {
+
+        correctTopBorderEnergy(seam[0]);
+
+        for (int y = 1, leftmost = n; y < m - 1; y++, leftmost += n) {
+            int seamX = seam[y], pos = leftmost + seamX, rightmost =
+                    leftmost + n - 1;
+            if (seamX > 1 && seamX < n - 1) {
+                energy[pos] = energyFunc.nonBorderValue(pos);
+                energy[pos - 1] = energyFunc.nonBorderValue(pos - 1);
+            }
+            else if (seamX <= 1) {
+                energy[leftmost] = energyFunc.leftBorderValue(leftmost);
+                if (seamX == 1) energy[pos] = energyFunc.nonBorderValue(pos);
+            }
+            else if (seamX >= n - 1) {
+                energy[rightmost] = energyFunc.rightBorderValue(rightmost);
+                if (seamX == n - 1) energy[pos - 1] =
+                        energyFunc.nonBorderValue(pos - 1);
+            }
+        }
+
+        correctBottomBorderEnergy(seam[m - 1]);
+    }
+
+    private void correctTopBorderEnergy(int seamX) {
+        if (seamX > 1 && seamX < n - 1) {
+            energy[seamX] = energyFunc.topBorderValue(seamX);
+            energy[seamX - 1] = energyFunc.topBorderValue(seamX - 1);
+        }
+        else if (seamX <= 1) {
+            energy[0] = energyFunc.topLeftCornerValue();
+            if (seamX == 1) energy[1] = energyFunc.topBorderValue(1);
+        }
+        else if (seamX >= n - 1) {
+            energy[n - 1] = energyFunc.topRightCornerValue(n - 1);
+            if (seamX == n - 1) energy[n - 2] =
+                    energyFunc.topBorderValue(n - 2);
+        }
+    }
+
+    private void correctBottomBorderEnergy(int seamX) {
+        int bottomLeft = nm - n, bottomRight = nm - 1;
+        int pos = bottomLeft + seamX;
+        if (seamX > 1 && seamX < n - 1) {
+            energy[pos] = energyFunc.bottomBorderValue(pos);
+            energy[pos - 1] = energyFunc.bottomBorderValue(pos - 1);
+        }
+        else if (seamX <= 1) {
+            energy[bottomLeft] = energyFunc.bottomLeftCornerValue(bottomLeft);
+            if (seamX == 1) energy[pos] = energyFunc.bottomBorderValue(pos);
+        }
+        else if (seamX >= n - 1) {
+            energy[bottomRight] =
+                    energyFunc.bottomRightCornerValue(bottomRight);
+            if (seamX == n - 1) energy[pos - 1] =
+                    energyFunc.bottomBorderValue(pos - 1);
+        }
     }
 }
