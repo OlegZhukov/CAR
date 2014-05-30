@@ -1,7 +1,5 @@
 package com.OlegZhukov.CAR;
 
-import java.util.Arrays;
-
 class ShortestVerticalPath {
     private int n;
     private int nm;
@@ -21,8 +19,8 @@ class ShortestVerticalPath {
 
     public int doFind() {
         initDistTo();
-        for (int minOfUpper3 = n, minOfUpper2 = n, upperRight = n + 1, upperRightmost =
-                2 * n - 1, curr = 2 * n;; upperRight++, curr++) {
+        for (int minOfUpper3 = 0, minOfUpper2 = 0, upperRight = 1, upperRightmost =
+                n - 1, curr = n;; upperRight++, curr++) {
             if (distTo[upperRight] >= distTo[minOfUpper2]) {
                 minOfUpper3 = minOfUpper2;
                 if (minOfUpper2 != upperRight - 1) minOfUpper2 =
@@ -41,10 +39,10 @@ class ShortestVerticalPath {
                 upperRightmost += n;
             }
         }
-        return getMinBottomDistToIndex();
+        return getIndexOfMinBottomDistTo();
     }
 
-    private int getMinBottomDistToIndex() {
+    private int getIndexOfMinBottomDistTo() {
         int result = nm - n;
         for (int i = result + 1; i < nm; i++)
             if (distTo[i] < distTo[result]) result = i;
@@ -52,8 +50,6 @@ class ShortestVerticalPath {
     }
 
     private void initDistTo() {
-        Arrays.fill(distTo, 0, n - 1, 0);
-        for (int i = n; i < 2 * n; i++)
-            distTo[i] = energy[i];
+        System.arraycopy(energy, 0, distTo, 0, n);
     }
 }

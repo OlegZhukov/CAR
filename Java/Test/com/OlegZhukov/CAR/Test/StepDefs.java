@@ -17,11 +17,10 @@ import edu.princeton.cs.introcs.Picture;
 public class StepDefs {
     private String inputImageFile;
     private String energyFunc;
-    private String reverseScan;
 
     @Before
     public void beforeScenario() {
-        energyFunc = reverseScan = "";
+        energyFunc = "";
     }
 
     @Given("^image (.*)$")
@@ -34,16 +33,11 @@ public class StepDefs {
         this.energyFunc = energyFunc;
     }
 
-    @And("I switch to a reverse scan")
-    public void switchToReverseScan() {
-        this.reverseScan = " -r";
-    }
-
     @And("^I resize the image to (.*) width and (.*) height$")
     public void resize(String v, String h) {
         if (energyFunc != "") energyFunc = " -e=" + energyFunc;
-        CAR.main(String.format("-w=%s -h=%s%s%s %s", v, h, energyFunc,
-                reverseScan, inputImageFile).split(" "));
+        CAR.main(String.format("-w=%s -h=%s%s %s", v, h, energyFunc,
+                inputImageFile).split(" "));
     }
 
     @Then("^I should get image (.*)$")

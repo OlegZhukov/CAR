@@ -10,7 +10,6 @@ public class CAR {
     private static String inputPictureFile;
     private static Picture inputPicture;
     private static EnergyFunction energyFunc;
-    private static boolean reverseScan;
     private static int verticalSeamCount;
     private static int horizontalSeamCount;
     private static int seamsRemoved;
@@ -22,8 +21,8 @@ public class CAR {
         if (verticalSeamCount > 0) {
             seamsRemoved = 0;
             SeamCarver sc =
-                    new SeamCarver(picture, true, reverseScan,
-                            energyFunc, () -> System.out.printf(
+                    new SeamCarver(picture, true, energyFunc,
+                            () -> System.out.printf(
                                     "Changing width: %d%%\r",
                                     ++seamsRemoved * 100 / verticalSeamCount));
             sc.removeSeams(verticalSeamCount);
@@ -34,8 +33,8 @@ public class CAR {
         if (horizontalSeamCount > 0) {
             seamsRemoved = 0;
             SeamCarver sc =
-                    new SeamCarver(picture, false, reverseScan,
-                            energyFunc, () -> System.out.printf(
+                    new SeamCarver(picture, false, energyFunc,
+                            () -> System.out.printf(
                                     "Changing height: %d%%\r",
                                     ++seamsRemoved * 100 / horizontalSeamCount));
             sc.removeSeams(horizontalSeamCount);
@@ -53,7 +52,7 @@ public class CAR {
     private static boolean processInputArgs(String[] args) {
         StringBuilder newWidth = new StringBuilder(), newHeight =
                 new StringBuilder();
-        processDefaultInputArgs();
+        energyFunc = new BrightnessGradientNorm();
         for (String argS : args) {
             StringBuilder arg = new StringBuilder(argS);
             if (cutAnyBeginning(arg, "-w=", "--width=")) newWidth = arg;
@@ -62,8 +61,6 @@ public class CAR {
                     parseEnergyFunc(arg);
             else if (new File(argS).isFile()) inputPicture =
                     new Picture(inputPictureFile = argS);
-            else if (argS.equals("-r") || argS.equals("--reverse")) reverseScan =
-                    true;
             else {
                 System.out.printf("\nWrong option or file name: %s\n\n", argS);
                 printUsage();
@@ -76,11 +73,6 @@ public class CAR {
             return false;
         }
         return initSeamCount(newWidth.toString(), newHeight.toString());
-    }
-
-    private static void processDefaultInputArgs() {
-        energyFunc = new BrightnessGradientNorm();
-        reverseScan = false;
     }
 
     private static boolean cutAnyBeginning(StringBuilder argSB,
@@ -129,8 +121,6 @@ public class CAR {
                 + " BrightGradX - brightness gradient X component,\n\t\t\t\t"
                 + " RGBGradNorm - norm of RGB gradient.\n\t\t\t\t"
                 + "Default is BrightGradNorm.");
-        System.out.println("  -r, --reverse\t\t\t"
-                + "Scan image in reverse direction (R-to-L, B-to-T)");
     }
 
     private static boolean
