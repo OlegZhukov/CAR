@@ -13,7 +13,7 @@ namespace OlegZhukov.CAR
         Action progressCallback;
         int n, m, nm;
         EnergyFunction energyFunc;
-        Color[] linearizedPicture;
+        int[] linearizedPicture;
         float[] energy;
         int[] lastFoundSeam;
         float[] distTo;
@@ -56,13 +56,13 @@ namespace OlegZhukov.CAR
 
         void initLinearizedPicture()
         {
-            linearizedPicture = new Color[nm];
+            linearizedPicture = new int[nm];
             if (removeVerticalSeams) for (int i = 0, k = 0; i < m; i++)
                     for (int j = 0; j < n; j++, k++)
-                        linearizedPicture[k] = cachedPicture.GetPixel(j, i);
+                        linearizedPicture[k] = cachedPicture.GetPixel(j, i).ToArgb();
             else for (int i = 0, k = 0; i < m; i++)
                     for (int j = 0; j < n; j++, k++)
-                        linearizedPicture[k] = cachedPicture.GetPixel(i, j);
+                        linearizedPicture[k] = cachedPicture.GetPixel(i, j).ToArgb();
         }
 
         Bitmap createPictureByLinearizedPicture()
@@ -72,10 +72,10 @@ namespace OlegZhukov.CAR
             Bitmap result = new Bitmap(width, height);
             if (removeVerticalSeams) for (int i = 0, k = 0; i < m; i++)
                     for (int j = 0; j < n; j++, k++)
-                        result.SetPixel(j, i, linearizedPicture[k]);
+                        result.SetPixel(j, i, Color.FromArgb(linearizedPicture[k]));
             else for (int i = 0, k = 0; i < m; i++)
                     for (int j = 0; j < n; j++, k++)
-                        result.SetPixel(i, j, linearizedPicture[k]);
+                        result.SetPixel(i, j, Color.FromArgb(linearizedPicture[k]));
             return result;
         }
 

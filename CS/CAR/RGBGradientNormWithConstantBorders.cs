@@ -14,14 +14,14 @@ namespace OlegZhukov.CAR
         {
             if (x == 0 || x == n - 1 || y == 0 || y == m - 1) return BORDER_ENERGY;
 
-            Color upper = linearizedPicture[i - n], lower = linearizedPicture[i + n],
+            int upper = linearizedPicture[i - n], lower = linearizedPicture[i + n],
                   left = linearizedPicture[i - 1], right = linearizedPicture[i + 1];
-            float rDeltaX = right.R - left.R, rDeltaY =
-                    lower.R - upper.R, gDeltaX =
-                    right.G - left.G, gDeltaY =
-                    lower.G - upper.G, bDeltaX =
-                    right.B - left.B, bDeltaY =
-                    lower.B - upper.B;
+            float rDeltaX = red(right) - red(left), rDeltaY =
+                    red(lower) - red(upper), gDeltaX =
+                    green(right) - green(left), gDeltaY =
+                    green(lower) - green(upper), bDeltaX =
+                    blue(right) - blue(left), bDeltaY =
+                    blue(lower) - blue(upper);
             return (float)Math.Sqrt(rDeltaX * rDeltaX + rDeltaY * rDeltaY
                     + gDeltaX * gDeltaX + gDeltaY * gDeltaY
                     + bDeltaX * bDeltaX + bDeltaY * bDeltaY);

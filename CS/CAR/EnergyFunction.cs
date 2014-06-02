@@ -9,14 +9,14 @@ namespace OlegZhukov.CAR
     abstract class EnergyFunction
     {
         protected int n, m;
-        protected Color[] linearizedPicture;
+        protected int[] linearizedPicture;
 
         public void decrementN()
         {
             this.n--;
         }
 
-        public void init(int n, int m, Color[] linearizedPicture)
+        public void init(int n, int m, int[] linearizedPicture)
         {
             this.n = n;
             this.m = m;
@@ -25,10 +25,22 @@ namespace OlegZhukov.CAR
 
         public abstract float value(int i, int x, int y);
 
+        protected float red(int color) {
+            return (color >> 16) & 0xFF;
+        }
+
+        protected float green(int color) {
+            return (color >> 8) & 0xFF;
+        }
+
+        protected float blue(int color) {
+            return (color >> 0) & 0xFF;
+        }
+
         protected float brightness(int i)
         {
-            Color color = linearizedPicture[i];
-            return (color.R + color.G + color.B) / (3f * 255f);
+            int color = linearizedPicture[i];
+            return (red(color) + green(color) + blue(color)) / (3 * 255);
         }
     }
 }
