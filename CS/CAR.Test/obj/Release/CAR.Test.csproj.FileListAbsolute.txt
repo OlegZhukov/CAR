@@ -1,0 +1,10 @@
+C:\Users\Oleg\Documents\Visual Studio 2010\Projects\CAR\CS\CAR.Test\bin\Release\CAR.Test.dll.config
+C:\Users\Oleg\Documents\Visual Studio 2010\Projects\CAR\CS\CAR.Test\bin\Release\CAR.Test.dll
+C:\Users\Oleg\Documents\Visual Studio 2010\Projects\CAR\CS\CAR.Test\bin\Release\CAR.Test.pdb
+C:\Users\Oleg\Documents\Visual Studio 2010\Projects\CAR\CS\CAR.Test\bin\Release\CAR.exe
+C:\Users\Oleg\Documents\Visual Studio 2010\Projects\CAR\CS\CAR.Test\bin\Release\nunit.framework.dll
+C:\Users\Oleg\Documents\Visual Studio 2010\Projects\CAR\CS\CAR.Test\bin\Release\TechTalk.SpecFlow.dll
+C:\Users\Oleg\Documents\Visual Studio 2010\Projects\CAR\CS\CAR.Test\bin\Release\nunit.framework.xml
+C:\Users\Oleg\Documents\Visual Studio 2010\Projects\CAR\CS\CAR.Test\obj\Release\CAR.Test.csprojResolveAssemblyReference.cache
+C:\Users\Oleg\Documents\Visual Studio 2010\Projects\CAR\CS\CAR.Test\obj\Release\CAR.Test.dll
+C:\Users\Oleg\Documents\Visual Studio 2010\Projects\CAR\CS\CAR.Test\obj\Release\CAR.Test.pdb

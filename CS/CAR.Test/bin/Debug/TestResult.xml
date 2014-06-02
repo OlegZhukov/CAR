@@ -1,0 +1,30 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!--This file represents the results of running a test suite-->
+<test-results name="C:\Users\Oleg\Documents\Visual Studio 2010\Projects\CAR\CS\CAR.Test\bin\Debug\CAR.Test.dll" total="4" errors="0" failures="0" not-run="0" inconclusive="0" ignored="0" skipped="0" invalid="0" date="2014-06-01" time="20:53:06">
+  <environment nunit-version="2.6.2.12296" clr-version="4.0.30319.18063" os-version="Microsoft Windows NT 6.1.7601 Service Pack 1" platform="Win32NT" cwd="C:\Users\Oleg\Documents\Visual Studio 2010\Projects\CAR\CS\CAR.Test\bin\Debug" machine-name="ALIENWARE" user="Oleg" user-domain="Alienware" />
+  <culture-info current-culture="ru-RU" current-uiculture="ru-RU" />
+  <test-suite type="Assembly" name="C:\Users\Oleg\Documents\Visual Studio 2010\Projects\CAR\CS\CAR.Test\bin\Debug\CAR.Test.dll" executed="True" result="Success" success="True" time="14.654" asserts="0">
+    <results>
+      <test-suite type="Namespace" name="CAR" executed="True" result="Success" success="True" time="14.654" asserts="0">
+        <results>
+          <test-suite type="Namespace" name="Test" executed="True" result="Success" success="True" time="14.654" asserts="0">
+            <results>
+              <test-suite type="Namespace" name="Features" executed="True" result="Success" success="True" time="14.653" asserts="0">
+                <results>
+                  <test-suite type="TestFixture" name="FindingAndRemovingSeamsFeature" description="Finding and removing seams" executed="True" result="Success" success="True" time="14.653" asserts="0">
+                    <results>
+                      <test-case name="CAR.Test.Features.FindingAndRemovingSeamsFeature.RemovingAFewSeamsWithTheRGBGradNormEnergyFunction" description="Removing a few seams with the RGBGradNorm energy function" executed="True" result="Success" success="True" time="1.979" asserts="3" />
+                      <test-case name="CAR.Test.Features.FindingAndRemovingSeamsFeature.ResizingTo50X300PxWithTheBrightGradNormEnergyFunction" description="Resizing to 50% x 300px with the BrightGradNorm energy function" executed="True" result="Success" success="True" time="4.387" asserts="3" />
+                      <test-case name="CAR.Test.Features.FindingAndRemovingSeamsFeature.ResizingTo50X300PxWithTheDefaultEnergyFunction" description="Resizing to 50% x 300px with the default energy function" executed="True" result="Success" success="True" time="4.340" asserts="3" />
+                      <test-case name="CAR.Test.Features.FindingAndRemovingSeamsFeature.ResizingTo70WithTheBrightGradXEnergyFunction" description="Resizing to 70% with the BrightGradX energy function" executed="True" result="Success" success="True" time="3.939" asserts="3" />
+                    </results>
+                  </test-suite>
+                </results>
+              </test-suite>
+            </results>
+          </test-suite>
+        </results>
+      </test-suite>
+    </results>
+  </test-suite>
+</test-results>
