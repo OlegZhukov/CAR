@@ -28,7 +28,7 @@ namespace OlegZhukov.CAR
                     picture = removeSeams(picture, true);
                 if (horizontalSeamCount > 0)
                     picture = removeSeams(picture, false);
-                Console.WriteLine(" [{0:f}sec]", sw.Elapsed.TotalSeconds);
+                Console.WriteLine("Elapsed time: {0:f}sec", sw.Elapsed.TotalSeconds);
             }
             outputPicture(picture);
         }
@@ -47,7 +47,7 @@ namespace OlegZhukov.CAR
                     () => Console.Write("Changing {0}: {1}%\r",
                     changedDimension, ++seamsRemoved * 100 / seamCount));
             sc.removeSeams(seamCount);
-            Console.Write("Changing {0}: 100%", changedDimension);
+            Console.WriteLine("Changing {0}: 100%", changedDimension);
             return sc.picture();
         }
 
