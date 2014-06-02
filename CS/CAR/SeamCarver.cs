@@ -89,16 +89,16 @@ namespace OlegZhukov.CAR
 
         int[] findSeam()
         {
-            int spNode =
-                    new ShortestVerticalPath(energy, n, nm, distTo, prev).doFind();
-            int currRowLeftmost = nm - n;
-            for (int i = m - 1; i >= 0; i--)
-            {
-                lastFoundSeam[i] = spNode - currRowLeftmost;
-                currRowLeftmost -= n;
-                spNode = prev[spNode];
-            }
-            return lastFoundSeam;
+            //int spNode =
+            //        new ShortestVerticalPath(energy, n, nm, distTo, prev).doFind();
+            //int currRowLeftmost = nm - n;
+            //for (int i = m - 1; i >= 0; i--)
+            //{
+            //    lastFoundSeam[i] = spNode - currRowLeftmost;
+            //    currRowLeftmost -= n;
+            //    spNode = prev[spNode];
+            //}
+            return new int[m];
         }
 
         void removeSeam(int[] seam)
