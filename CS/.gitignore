@@ -1,3 +1,8 @@
 CAR.suo
 CAR/bin
 CAR/obj
+CAR.Test/bin
+CAR.Test/obj
+CAR/CAR.csproj.user
+CAR.Test/CAR.Test.csproj.user
+packages
