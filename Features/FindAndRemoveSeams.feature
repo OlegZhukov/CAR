@@ -1,5 +1,5 @@
 Feature: Finding and removing seams
-
+  
   Scenario: Removing a few seams with the RGBGradNorm energy function
     Given image Test-Input.png
     When I use the energy function RGBGradNorm

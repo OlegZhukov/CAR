@@ -37,7 +37,7 @@ Global
 		{364B8A6F-6276-4C12-BADA-C7B0050FBA76}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(MonoDevelopProperties) = preSolution
-		StartupItem = CAR\CAR.csproj
+		StartupItem = CAR.Test\CAR.Test.csproj
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -16,7 +16,9 @@ namespace CAR.Test
         [BeforeFeature]
         public static void BeforeFeature()
         {
-            Directory.SetCurrentDirectory("..\\..\\..\\..\\Features");
+			File.Create ("hi.txt");
+            Directory.SetCurrentDirectory(string.Format(
+				"..{0}..{0}..{0}..{0}Features", Path.DirectorySeparatorChar));
         }
 
         [BeforeScenario]
@@ -64,8 +66,8 @@ namespace CAR.Test
         [AfterScenario]
         public void AfterScenario()
         {
-            if (File.Exists(Program.getOutputPictureFile()))
-                File.Delete(Program.getOutputPictureFile());
+//            if (File.Exists(Program.getOutputPictureFile()))
+//                File.Delete(Program.getOutputPictureFile());
         }
     }
 }
