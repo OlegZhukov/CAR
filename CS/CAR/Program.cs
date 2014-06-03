@@ -24,10 +24,8 @@ namespace OlegZhukov.CAR
             {
                 Stopwatch sw = new Stopwatch();
                 sw.Start();
-                if (verticalSeamCount > 0)
-                    picture = removeSeams(picture, true);
-                if (horizontalSeamCount > 0)
-                    picture = removeSeams(picture, false);
+                if (verticalSeamCount > 0) picture = removeSeams(picture, true);
+                if (horizontalSeamCount > 0) picture = removeSeams(picture, false);
                 Console.WriteLine("Elapsed time: {0:f}sec", sw.Elapsed.TotalSeconds);
             }
             outputPicture(picture);
@@ -121,7 +119,7 @@ namespace OlegZhukov.CAR
 
         static void printUsage()
         {
-            Console.WriteLine("Usage: java ...CAR [OPTION]... IMAGE_FILE");
+            Console.WriteLine("Usage: CAR [OPTION]... IMAGE_FILE");
             Console.WriteLine("Options:");
             Console.WriteLine("  -w, --width=NUM[px|%]\t\t"
                     + "Reduce image width to NUM px (or %)");
