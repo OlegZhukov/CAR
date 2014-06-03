@@ -1,3 +1,10 @@
+/*
+ * Content-Aware Resizing Tool.
+ *
+ * Copyright © 2014, Oleg Zhukov (mailto:mail@OlegZhukov.com)
+ *
+ * This software is licensed under GPL 3.0 license.
+ */
 package com.OlegZhukov.CAR;
 
 import java.io.File;
@@ -18,35 +25,29 @@ public class CAR {
         if (!processInputArgs(args)) return;
         Picture picture = inputPicture;
         Stopwatch sw = new Stopwatch();
-        if (verticalSeamCount > 0) {
-            seamsRemoved = 0;
-            SeamCarver sc =
-                    new SeamCarver(picture, true, energyFunc,
-                            () -> System.out.printf(
-                                    "Changing width: %d%%\r",
-                                    ++seamsRemoved * 100 / verticalSeamCount));
-            sc.removeSeams(verticalSeamCount);
-            picture = sc.picture();
-            System.out.printf("Changing width: 100%% [%fsec]\n",
-                    sw.elapsedTime());
-        }
-        if (horizontalSeamCount > 0) {
-            seamsRemoved = 0;
-            SeamCarver sc =
-                    new SeamCarver(picture, false, energyFunc,
-                            () -> System.out.printf(
-                                    "Changing height: %d%%\r",
-                                    ++seamsRemoved * 100 / horizontalSeamCount));
-            sc.removeSeams(horizontalSeamCount);
-            picture = sc.picture();
-            System.out.printf("Changing height: 100%% [%fsec]\n",
-                    sw.elapsedTime());
-        }
+        if (verticalSeamCount > 0) picture = removeSeams(picture, true);
+        if (horizontalSeamCount > 0) picture = removeSeams(picture, false);
+        System.out.printf("Elapsed time: %fsec\n", sw.elapsedTime());
         outputPicture(picture);
     }
 
     public static String getOutputPictureFile() {
         return insertCARBeforeExtension(inputPictureFile);
+    }
+
+    private static Picture removeSeams(Picture picture, boolean vertical) {
+        seamsRemoved = 0;
+        int seamCount = vertical ? verticalSeamCount : horizontalSeamCount;
+        String changedDimension = vertical ? "width" : "height";
+        SeamCarver sc =
+                new SeamCarver(picture, vertical, energyFunc,
+                        () -> System.out.printf(
+                                "Changing %s: %d%%\r", changedDimension,
+                                ++seamsRemoved * 100 / seamCount));
+        sc.removeSeams(seamCount);
+        picture = sc.picture();
+        System.out.printf("Changing %s: 100%%\n", changedDimension);
+        return picture;
     }
 
     private static boolean processInputArgs(String[] args) {
