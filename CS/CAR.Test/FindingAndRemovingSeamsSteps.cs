@@ -16,7 +16,6 @@ namespace CAR.Test
         [BeforeFeature]
         public static void BeforeFeature()
         {
-			File.Create ("hi.txt");
             Directory.SetCurrentDirectory(string.Format(
 				"..{0}..{0}..{0}..{0}Features", Path.DirectorySeparatorChar));
         }
