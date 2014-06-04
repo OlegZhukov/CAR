@@ -18,6 +18,7 @@ namespace OlegZhukov.CAR
 
         public static void Main(String[] args)
         {
+            if (processCompareArg(args)) return;
             if (!processInputArgs(args)) return;
             Bitmap picture = inputPicture;
             using (inputPicture)
@@ -31,6 +32,30 @@ namespace OlegZhukov.CAR
                 Console.WriteLine("Elapsed time: {0:f}sec", sw.Elapsed.TotalSeconds);
             }
             outputPicture(picture);
+        }
+
+        private static bool processCompareArg(string[] args)
+        {
+            if (args[0] == "--compare")
+            {
+                string[] seams = File.ReadAllLines("seams.txt"),
+                         seams1 = File.ReadAllLines("seams1.txt");
+                for (int i = 0; i < seams.Length; i++)
+                    if (seams[i] != seams1[i])
+                    {
+                        string[] seamElements = seams[i].Split(','),
+                                 seam1Elements = seams1[i].Split(',');
+                        for (int j = 0; j < seamElements.Length; j++)
+                            if (seamElements[j] != seam1Elements[j])
+                            {
+                                Console.WriteLine("{0}th seams differ at position {1} ({2} vs. {3})",
+                                    i, j, seamElements[j], seam1Elements[j]);
+                                return true;
+                            }
+                    }
+                return true;
+            }
+            return false;
         }
 
         public static String getOutputPictureFile()
