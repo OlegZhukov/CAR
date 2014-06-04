@@ -66,8 +66,8 @@ namespace CAR.Test
         [AfterScenario]
         public void AfterScenario()
         {
-//            if (File.Exists(Program.getOutputPictureFile()))
-//                File.Delete(Program.getOutputPictureFile());
+            if (File.Exists(Program.getOutputPictureFile()))
+                File.Delete(Program.getOutputPictureFile());
         }
     }
 }
