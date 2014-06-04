@@ -119,7 +119,7 @@ namespace OlegZhukov.CAR
 
         static void printUsage()
         {
-            Console.WriteLine("Usage: CAR [OPTION]... IMAGE_FILE");
+            Console.WriteLine("Usage: CAR.exe [OPTION]... IMAGE_FILE");
             Console.WriteLine("Options:");
             Console.WriteLine("  -w, --width=NUM[px|%]\t\t"
                     + "Reduce image width to NUM px (or %)");
