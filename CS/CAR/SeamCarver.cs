@@ -39,6 +39,8 @@ namespace OlegZhukov.CAR
             this.lastFoundSeam = new int[m];
             this.distTo = new float[nm];
             this.prev = new int[nm];
+			
+			System.IO.File.WriteAllText("seams.txt", string.Empty);
         }
 
         public Bitmap picture()
@@ -98,6 +100,14 @@ namespace OlegZhukov.CAR
                 currRowLeftmost -= n;
                 spNode = prev[spNode];
             }
+			
+			StringBuilder seamSB = new StringBuilder();
+			for (int i = 0; i < m; i++)
+				seamSB.AppendFormat("{0},", lastFoundSeam[i]);
+			seamSB.Length--;
+			seamSB.Append (Environment.NewLine);
+			System.IO.File.AppendAllText("seams.txt", seamSB.ToString ());
+			
             return lastFoundSeam;
         }
 
