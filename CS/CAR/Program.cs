@@ -166,7 +166,7 @@ namespace OlegZhukov.CAR
                                 : int.Parse(valStr.Replace("px", ""));
                 else val = originalVal;
             }
-            catch (FormatException e)
+            catch (FormatException)
             {
                 val = -1;
             }
