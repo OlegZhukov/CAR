@@ -5,4 +5,8 @@ CAR.Test/bin
 CAR.Test/obj
 CAR/CAR.csproj.user
 CAR.Test/CAR.Test.csproj.user
+test-results
+*.pidb
+*.userprefs
+*~
 packages

@@ -48,9 +48,16 @@ public class StepDefs {
     }
 
     @Then("^I should get image (.*)$")
-    public void shouldGetImage(String expectedImageFile) {
-        Assert.assertTrue(new Picture(expectedImageFile).equals(new Picture(CAR
-                .getOutputPictureFile())));
+    public void shouldGetImage(String expectedImageFiles) {
+        String[] expectedImageFilesArr =
+                expectedImageFiles.split("( or | OR )");
+        for (int i = 0; i < expectedImageFilesArr.length; i++)
+            if (new Picture(expectedImageFilesArr[i]).equals(new Picture(CAR
+                    .getOutputPictureFile()))) {
+                Assert.assertTrue(true);
+                return;
+            }
+        Assert.fail();
     }
 
     @After

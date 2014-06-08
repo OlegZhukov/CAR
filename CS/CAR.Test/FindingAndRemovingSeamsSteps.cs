@@ -16,7 +16,8 @@ namespace CAR.Test
         [BeforeFeature]
         public static void BeforeFeature()
         {
-            Directory.SetCurrentDirectory("..\\..\\..\\..\\Features");
+            Directory.SetCurrentDirectory(string.Format(
+				"..{0}..{0}..{0}..{0}Features", Path.DirectorySeparatorChar));
         }
 
         [BeforeScenario]
@@ -44,22 +45,33 @@ namespace CAR.Test
             Program.Main(String.Format("-w={0} -h={1}{2} {3}", v, h, energyFunc,
                     inputImageFile).Split(' '));
         }
-
+        
         [Then(@"I should get image (.*)")]
-        public void shouldGetImage(String expectedImageFile)
+        public void shouldGetImage(String expectedImageFiles)
         {
-            using (Bitmap expectedImage = new Bitmap(expectedImageFile),
-                   actualImage = new Bitmap(Program.getOutputPictureFile()))
-            {
-                Assert.AreEqual(expectedImage.Width, actualImage.Width);
-                Assert.AreEqual(expectedImage.Height, actualImage.Height);
-                for (int x = 0; x < expectedImage.Width; x++)
-                    for (int y = 0; y < actualImage.Height; y++)
-                        if (expectedImage.GetPixel(x, y) != actualImage.GetPixel(x, y))
-                            Assert.Fail();
-                Assert.IsTrue(true);
-            }
+			String[] expectedImageFilesArr = expectedImageFiles.Split(
+				new [] { " or ", " OR " }, StringSplitOptions.RemoveEmptyEntries);
+            for (int i = 0; i < expectedImageFilesArr.Length; i++)
+            	using (Bitmap expectedImage = new Bitmap(expectedImageFilesArr[i]),
+            	       actualImage = new Bitmap(Program.getOutputPictureFile()))
+            		if (ImagesAreEqual(expectedImage, actualImage))
+					{
+            			Assert.IsTrue(true);
+						return;
+					}
+			Assert.Fail();
         }
+		
+		bool ImagesAreEqual(Bitmap expectedImage, Bitmap actualImage)
+		{
+			if (expectedImage.Width != actualImage.Width) return false;
+			if (expectedImage.Height != actualImage.Height) return false;
+        	for (int x = 0; x < expectedImage.Width; x++)
+        		for (int y = 0; y < actualImage.Height; y++)
+        			if (expectedImage.GetPixel(x, y) != actualImage.GetPixel(x, y))
+        				return false;
+			return true;
+		}		
 
         [AfterScenario]
         public void AfterScenario()
