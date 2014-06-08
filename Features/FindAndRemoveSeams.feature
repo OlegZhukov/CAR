@@ -15,10 +15,10 @@ Feature: Finding and removing seams
   Scenario: Resizing to 50% x 300px with the default energy function
     Given image Test-Input.png
     When I resize the image to 50% width and 300px height
-    Then I should get image Test-Output3.png or Test-Output3_2.png
+    Then I should get image Test-Output34.png or Test-Output34_2.png
     
   Scenario: Resizing to 50% x 300px with the BrightGradNorm energy function
     Given image Test-Input.png
     When I use the energy function BrightGradNorm  
     And I resize the image to 50% width and 300px height
-    Then I should get image Test-Output4.png OR Test-Output4_2.png
+    Then I should get image Test-Output34.png OR Test-Output34_2.png

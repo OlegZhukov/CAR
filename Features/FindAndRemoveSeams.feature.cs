@@ -113,7 +113,7 @@ namespace CAR.Test.Features
 #line 17
     testRunner.When("I resize the image to 50% width and 300px height");
 #line 18
-    testRunner.Then("I should get image Test-Output3.png or Test-Output3_2.png");
+    testRunner.Then("I should get image Test-Output34.png or Test-Output34_2.png");
 #line hidden
             this.ScenarioCleanup();
         }
@@ -132,7 +132,7 @@ namespace CAR.Test.Features
 #line 23
     testRunner.And("I resize the image to 50% width and 300px height");
 #line 24
-    testRunner.Then("I should get image Test-Output4.png OR Test-Output4_2.png");
+    testRunner.Then("I should get image Test-Output34.png OR Test-Output34_2.png");
 #line hidden
             this.ScenarioCleanup();
         }
