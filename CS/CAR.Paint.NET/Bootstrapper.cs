@@ -15,6 +15,7 @@ namespace OlegZhukov.CAR.Paint.NET
     {
         const string OperationName = "Content-Aware Resize";
 
+        FieldInfo layerPropertiesField = typeof(Layer).GetField("properties", BindingFlags.Instance | BindingFlags.NonPublic);
         FieldInfo bitmapLayerPropertiesField = typeof(BitmapLayer).GetField("properties", BindingFlags.Instance | BindingFlags.NonPublic);
         Type replaceDocumentHistoryMementoClass = Type.GetType("PaintDotNet.HistoryMementos.ReplaceDocumentHistoryMemento, PaintDotNet");
 
@@ -61,8 +62,10 @@ namespace OlegZhukov.CAR.Paint.NET
         {
             Surface layerSurface = new Surface(newSize);
             BitmapLayer result = new BitmapLayer(layerSurface);
-            ICloneable clonedProperties = bitmapLayerPropertiesField.GetValue(layerToClonePropertiesFrom) as ICloneable;
-            bitmapLayerPropertiesField.SetValue(result, clonedProperties.Clone());
+            ICloneable clonedLayerProperties = layerPropertiesField.GetValue(layerToClonePropertiesFrom) as ICloneable,
+                       clonedBitmapLayerProperties = bitmapLayerPropertiesField.GetValue(layerToClonePropertiesFrom) as ICloneable;
+            layerPropertiesField.SetValue(result, clonedLayerProperties.Clone());
+            bitmapLayerPropertiesField.SetValue(result, clonedBitmapLayerProperties.Clone());
             return result;
         }
 

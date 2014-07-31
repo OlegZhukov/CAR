@@ -35,7 +35,7 @@ namespace OlegZhukov.CAR.Paint.NET
             Thread[] resizingThreads = new Thread[Math.Min(layerResizeTasks.Count, Environment.ProcessorCount)];
             for (int i = 0; i < resizingThreads.Length; i++)
             {
-                resizingThreads[i] = new Thread(() => ResizeThreadWork(layerResizeTasks, progressDialog));
+                resizingThreads[i] = new Thread(() => ResizeThreadFunction(layerResizeTasks, progressDialog));
                 resizingThreads[i].Start();
             }
             bool abortRequested = progressDialog.ShowDialog() == System.Windows.Forms.DialogResult.Cancel;
@@ -45,7 +45,7 @@ namespace OlegZhukov.CAR.Paint.NET
             return !abortRequested;
         }
 
-        static void ResizeThreadWork(Queue<LayerResizeTask> layerResizeTasks, CARProgressDialog progressDialog)
+        static void ResizeThreadFunction(Queue<LayerResizeTask> layerResizeTasks, CARProgressDialog progressDialog)
         {
             while (true)
             {
@@ -55,13 +55,28 @@ namespace OlegZhukov.CAR.Paint.NET
                     if (layerResizeTasks.Count == 0) return;
                     currTask = layerResizeTasks.Dequeue();
                 }
-                currTask.srcSurface[5, 6].
+                SeamCarver seamCarver = new SeamCarver(new SurfaceToIPictureAdapter(currTask.srcSurface),
+                    currTask.removeVerticalSeams, GetEnergyFunc(currTask.energyFunction), null);
                 while (!currTask.AbortRequested && currTask.CurrentlyRemovedSeams < currTask.TotalSeamsToRemove)
                 {
+                    seamCarver.removeSeam();
                     currTask.CurrentlyRemovedSeams++;
                     progressDialog.UpdateProgress();
                 }
+                if (currTask.AbortRequested) return;
+                seamCarver.fillPictureByLinearizedPicture(new SurfaceToIPictureAdapter(currTask.dstSurface));
             }
+        }
+
+        static EnergyFunction GetEnergyFunc(CARDialog.EnergyFunction energyFunction)
+        {
+            switch (energyFunction)
+            {
+                case CARDialog.EnergyFunction.BrightnessGradientNorm: return new BrightnessGradientNorm();
+                case CARDialog.EnergyFunction.BrightnessGradientX: return new BrightnessGradientX();
+                case CARDialog.EnergyFunction.RGBGradientNormWithConstantBorders: return new RGBGradientNormWithConstantBorders();
+            }
+            return new BrightnessGradientNorm();
         }
 
         public bool AbortRequested { get; set; }

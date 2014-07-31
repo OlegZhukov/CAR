@@ -8,7 +8,8 @@ namespace OlegZhukov.CAR
 {
     class SeamCarver
     {
-        Bitmap cachedPicture;
+        IPicture picture;
+        Bitmap cachedBitmap;
         bool removeVerticalSeams;
         Action progressCallback;
         int n, m, nm;
@@ -19,10 +20,15 @@ namespace OlegZhukov.CAR
         float[] distTo;
         int[] prev;
 
-        public SeamCarver(Bitmap picture, bool removeVerticalSeams,
+        public SeamCarver(Bitmap bitmap, bool removeVerticalSeams,
+                EnergyFunction energyFunc, Action progressCallback)
+            : this(new BitmapToIPictureAdapter(bitmap), removeVerticalSeams, energyFunc, progressCallback)
+        { }
+
+        public SeamCarver(IPicture picture, bool removeVerticalSeams,
                 EnergyFunction energyFunc, Action progressCallback)
         {
-            this.cachedPicture = picture;
+            this.picture = picture;
             this.removeVerticalSeams = removeVerticalSeams;
             this.progressCallback = progressCallback;
             this.n = removeVerticalSeams ? picture.Width : picture.Height;
@@ -41,17 +47,21 @@ namespace OlegZhukov.CAR
             this.prev = new int[nm];
         }
 
-        public Bitmap picture()
+        public Bitmap bitmap()
         {
-            if (cachedPicture == null) cachedPicture =
-                    createPictureByLinearizedPicture();
-            return cachedPicture;
+            if (cachedBitmap == null) cachedBitmap =
+                    createBitmapByLinearizedPicture();
+            return cachedBitmap;
+        }
+
+        public void removeSeam()
+        {
+            removeSeam(findSeam());
         }
 
         public void removeSeams(int count)
         {
-            for (int i = 0; i < count; i++)
-                removeSeam(findSeam());
+            for (int i = 0; i < count; i++) removeSeam();
         }
 
         void initLinearizedPicture()
@@ -59,24 +69,29 @@ namespace OlegZhukov.CAR
             linearizedPicture = new int[nm];
             if (removeVerticalSeams) for (int i = 0, k = 0; i < m; i++)
                     for (int j = 0; j < n; j++, k++)
-                        linearizedPicture[k] = cachedPicture.GetPixel(j, i).ToArgb();
+                        linearizedPicture[k] = picture.GetPixel(j, i);
             else for (int i = 0, k = 0; i < m; i++)
                     for (int j = 0; j < n; j++, k++)
-                        linearizedPicture[k] = cachedPicture.GetPixel(i, j).ToArgb();
+                        linearizedPicture[k] = picture.GetPixel(i, j);
         }
 
-        Bitmap createPictureByLinearizedPicture()
+        Bitmap createBitmapByLinearizedPicture()
         {
             int width = removeVerticalSeams ? n : m;
             int height = removeVerticalSeams ? m : n;
             Bitmap result = new Bitmap(width, height);
+            fillPictureByLinearizedPicture(new BitmapToIPictureAdapter(result));
+            return result;
+        }
+
+        public void fillPictureByLinearizedPicture(IPicture picture)
+        {
             if (removeVerticalSeams) for (int i = 0, k = 0; i < m; i++)
                     for (int j = 0; j < n; j++, k++)
-                        result.SetPixel(j, i, Color.FromArgb(linearizedPicture[k]));
+                        picture.SetPixel(j, i, linearizedPicture[k]);
             else for (int i = 0, k = 0; i < m; i++)
                     for (int j = 0; j < n; j++, k++)
-                        result.SetPixel(i, j, Color.FromArgb(linearizedPicture[k]));
-            return result;
+                        picture.SetPixel(i, j, linearizedPicture[k]);
         }
 
         void initEnergy()
@@ -103,7 +118,7 @@ namespace OlegZhukov.CAR
 
         void removeSeam(int[] seam)
         {
-            cachedPicture = null;
+            cachedBitmap = null;
             removeSeamFromLinearizedPictureAndEnergy(seam);
             updateEnergyAlongSeam(seam);
             if (progressCallback != null) progressCallback();

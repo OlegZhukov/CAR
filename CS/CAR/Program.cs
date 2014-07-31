@@ -46,7 +46,7 @@ namespace OlegZhukov.CAR
                     changedDimension, ++seamsRemoved * 100 / seamCount));
             sc.removeSeams(seamCount);
             Console.WriteLine("Changing {0}: 100%", changedDimension);
-            return sc.picture();
+            return sc.bitmap();
         }
 
         static bool processInputArgs(String[] args)

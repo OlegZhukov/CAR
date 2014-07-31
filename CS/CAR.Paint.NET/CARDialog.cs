@@ -98,7 +98,7 @@ namespace OlegZhukov.CAR.Paint.NET
 
         int MinimumSizeInPercent
         {
-            get { return 3 * 100 / OriginalSize + 1; }
+            get { return (int)Math.Ceiling(3f * 100 / OriginalSize); }
         }
 
         Unit CurrUnit
