@@ -3,6 +3,10 @@ CAR/bin
 CAR/obj
 CAR.Test/bin
 CAR.Test/obj
+CAR.Paint.NET/bin
+CAR.Paint.NET/obj
+CAR.Paint.NET.ManualUITest/bin
+CAR.Paint.NET.ManualUITest/obj
 CAR/CAR.csproj.user
 CAR.Test/CAR.Test.csproj.user
 test-results
