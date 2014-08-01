@@ -16,7 +16,7 @@ http://github.com/OlegZhukov/CAR/releases/download/v2.0/CAR.Paint.NET.zip.
 #### Usage
 
 Just copy the `CAR.Paint.NET.dll` library to the `Effects` folder in
-the Paint.Net directory (usually `C:\Program Files\paint.net\`).
+the Paint.NET directory (usually `C:\Program Files\paint.net\`).
 
 #### Compiling from sources
 
