@@ -10,7 +10,19 @@ The project consists of several sub-projects, each targeted to a specific enviro
 
 ## Paint.NET plugin
 
-(to be implemented)
+The latest binaries (dll file) can be downloaded from
+http://github.com/OlegZhukov/CAR/releases/download/v2.0/CAR.Paint.NET.zip.
+
+#### Usage
+
+Just copy the `CAR.Paint.NET.dll` library to the `Effects` folder in
+the Paint.Net directory (usually `C:\Program Files\paint.net\`).
+
+#### Compiling from sources
+
+The corresponding VS project is located in the *CS\CAR.Paint.NET\* directory.
+Before compiling it reroute (if needed) the project references
+pointing to Paint.NET dll's.
 
 ## Command line tool (Windows/cross-platform, .NET 4.0/Mono 2.8 or higher)
 
