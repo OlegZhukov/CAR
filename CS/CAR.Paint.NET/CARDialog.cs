@@ -5,7 +5,6 @@ using System.Data;
 using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
-using PaintDotNet.SystemLayer;
 using OlegZhukov.CAR.Paint.NET.Properties;
 
 namespace OlegZhukov.CAR.Paint.NET
@@ -108,7 +107,7 @@ namespace OlegZhukov.CAR.Paint.NET
 
         protected override void OnLayout(LayoutEventArgs levent)
         {
-            int scaledHeight = UI.ScaleHeight(8), scaledWidth = UI.ScaleWidth(8);
+            int scaledHeight = PdnUIUtils.ScaleHeight(8), scaledWidth = PdnUIUtils.ScaleWidth(8);
             int x = base.IsGlassEffectivelyEnabled ? -1 : scaledWidth,
                 y = Math.Max(0, scaledHeight - base.ExtendedFramePadding.Bottom);
             this.cancelButton.PerformLayout();

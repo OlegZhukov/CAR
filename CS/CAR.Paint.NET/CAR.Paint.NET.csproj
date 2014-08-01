@@ -33,22 +33,27 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="ICSharpCode.SharpZipLib, Version=0.86.0.518, Culture=neutral, PublicKeyToken=1b03e6acf1164f73, processorArchitecture=MSIL" />
+    <Reference Include="PaintDotNet">
+      <HintPath>..\..\..\..\..\..\..\..\Program Files\Paint.NET (old)\PaintDotNet.exe</HintPath>
+    </Reference>
     <Reference Include="PaintDotNet.Base">
-      <HintPath>..\..\..\..\..\..\..\..\Program Files\Paint.NET\PaintDotNet.Base.dll</HintPath>
+      <HintPath>..\..\..\..\..\..\..\..\Program Files\Paint.NET (old)\PaintDotNet.Base.dll</HintPath>
     </Reference>
     <Reference Include="PaintDotNet.Core">
-      <HintPath>..\..\..\..\..\..\..\..\Program Files\Paint.NET\PaintDotNet.Core.dll</HintPath>
+      <HintPath>..\..\..\..\..\..\..\..\Program Files\Paint.NET (old)\PaintDotNet.Core.dll</HintPath>
     </Reference>
-    <Reference Include="PaintDotNet.Data, Version=3.510.4297.28969, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\..\..\..\Program Files\Paint.NET\PaintDotNet.Data.dll</HintPath>
+    <Reference Include="PaintDotNet.Data">
+      <HintPath>..\..\..\..\..\..\..\..\Program Files\Paint.NET (old)\PaintDotNet.Data.dll</HintPath>
     </Reference>
     <Reference Include="PaintDotNet.Effects">
-      <HintPath>..\..\..\..\..\..\..\..\Program Files\Paint.NET\PaintDotNet.Effects.dll</HintPath>
+      <HintPath>..\..\..\..\..\..\..\..\Program Files\Paint.NET (old)\PaintDotNet.Effects.dll</HintPath>
     </Reference>
-    <Reference Include="PaintDotNet.Resources, Version=3.510.4297.28964, Culture=neutral, processorArchitecture=MSIL" />
-    <Reference Include="PaintDotNet.SystemLayer, Version=3.510.4297.28964, Culture=neutral, processorArchitecture=MSIL" />
+    <Reference Include="PaintDotNet.Resources">
+      <HintPath>..\..\..\..\..\..\..\..\Program Files\Paint.NET (old)\PaintDotNet.Resources.dll</HintPath>
+    </Reference>
+    <Reference Include="PaintDotNet.SystemLayer">
+      <HintPath>..\..\..\..\..\..\..\..\Program Files\Paint.NET (old)\PaintDotNet.SystemLayer.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Data" />
@@ -98,6 +103,7 @@
     </Compile>
     <Compile Include="LayerResizeTask.cs" />
     <Compile Include="PdnMenuManager.cs" />
+    <Compile Include="PdnUIUtils.cs" />
     <Compile Include="PdnWorkspaceManager.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
